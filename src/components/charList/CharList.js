@@ -41,7 +41,10 @@ class CharList extends Component {
     const spinner = loading ? <Spinner></Spinner> : null;
     const errorMessage = error ? <ErrorMessage></ErrorMessage> : null;
 
-    const content = !loading && !error ? <View chars={chars} /> : null;
+    const content =
+      !loading && !error ? (
+        <View chars={chars} onCharSelect={this.props.onCharSelect} />
+      ) : null;
 
     return (
       <div className="char__list">
@@ -49,38 +52,6 @@ class CharList extends Component {
           {spinner}
           {errorMessage}
           {content}
-          {/* <li className="char__item char__item_selected">
-            <img src={abyss} alt="abyss" />
-            <div className="char__name">Abyss</div>
-          </li>
-          <li className="char__item">
-            <img src={abyss} alt="abyss" />
-            <div className="char__name">Abyss</div>
-          </li>
-          <li className="char__item">
-            <img src={abyss} alt="abyss" />
-            <div className="char__name">Abyss</div>
-          </li>
-          <li className="char__item">
-            <img src={abyss} alt="abyss" />
-            <div className="char__name">Abyss</div>
-          </li>
-          <li className="char__item">
-            <img src={abyss} alt="abyss" />
-            <div className="char__name">Abyss</div>
-          </li>
-          <li className="char__item">
-            <img src={abyss} alt="abyss" />
-            <div className="char__name">Abyss</div>
-          </li>
-          <li className="char__item">
-            <img src={abyss} alt="abyss" />
-            <div className="char__name">Abyss</div>
-          </li>
-          <li className="char__item">
-            <img src={abyss} alt="abyss" />
-            <div className="char__name">Abyss</div>
-          </li> */}
         </ul>
         <button className="button button__main button__long">
           <div className="inner">load more</div>
@@ -90,13 +61,25 @@ class CharList extends Component {
   }
 }
 
-const View = ({ chars }) => {
-  console.log(chars);
+const View = ({ chars, onCharSelect }) => {
+  // console.log(chars);
   const charsList = chars.map((char) => {
     return (
       // char__item_selected
-      <li className="char__item" key={char.id}>
-        <img src={char.thumbnail} alt="abyss" />
+      <li
+        className="char__item"
+        key={char.id}
+        onClick={() => onCharSelect(char.id)}
+      >
+        <img
+          src={char.thumbnail}
+          alt="abyss"
+          className={
+            char.thumbnail.indexOf('image_not_available') > -1
+              ? ' not_found'
+              : null
+          }
+        />
         <div className="char__name">{char.name}</div>
       </li>
     );
