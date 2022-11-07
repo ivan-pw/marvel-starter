@@ -35,11 +35,21 @@ class CharInfo extends Component {
       .getCharacter(charId)
       .then(this.onCharLoaded)
       .catch(this.onError);
+
+    // throw Error('Testing error boundary');
   };
 
   componentWillUnmount() {
     // clearInterval(this.timerId);
   }
+
+  //   componentDidCatch(err, info) {
+  //     // for older versions
+  //     // console.log(err, info);
+  //     // this.setState({
+  //     //   error: true,
+  //     // });
+  //   }
 
   onCharLoaded = (char) => {
     // short desc
