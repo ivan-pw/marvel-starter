@@ -4,40 +4,71 @@ import ErrorMessage from '../errorMessage/ErrorMessage';
 import Spinner from '../spinner/Spinner';
 
 import './charList.scss';
-import abyss from '../../resources/img/abyss.jpg';
 
 class CharList extends Component {
   state = {
     chars: null,
     loading: true,
     error: false,
+    newItemsLoading: false,
+    offset: 220,
+    charEnded: false,
   };
 
   marvelService = new MarvelService();
 
   componentDidMount() {
     // throw Error('test');
-    this.onUpdateChars();
+    this.onRequest();
   }
 
-  onCharsLoaded = (chars) => {
-    // console.log(chars);
-    this.setState({ chars, loading: false });
+  onCharListLoading = () => {
+    this.setState({
+      newItemsLoading: true,
+    });
+  };
+
+  onRequest = (offset) => {
+    this.onCharListLoading();
+    this.marvelService
+      .getAllCharacters(offset)
+      .then(this.onCharsLoaded)
+      .catch(this.onError);
+  };
+
+  onCharsLoaded = (newChars) => {
+    // console.log(newChars);
+    let ended = false;
+
+    if (newChars.lenght < 9) {
+      ended = true;
+    }
+
+    this.setState(({ offset, chars }) => {
+      return {
+        chars: chars !== null ? [...chars, ...newChars] : [...newChars],
+        loading: false,
+        newItemsLoading: false,
+        offset: offset + 9,
+        ended: ended,
+      };
+    });
   };
 
   onError = () => {
     this.setState({ error: true });
   };
 
-  onUpdateChars = () => {
-    this.marvelService
-      .getAllCharacters()
-      .then(this.onCharsLoaded)
-      .catch(this.onError);
-  };
+  // onUpdateChars = () => {
+  //   this.marvelService
+  //     .getAllCharacters()
+  //     .then(this.onCharsLoaded)
+  //     .catch(this.onError);
+  // };
 
   render() {
-    const { loading, error, chars } = this.state;
+    const { loading, error, chars, offset, newItemsLoading, charEnded } =
+      this.state;
 
     const spinner = loading ? <Spinner></Spinner> : null;
     const errorMessage = error ? <ErrorMessage></ErrorMessage> : null;
@@ -47,6 +78,7 @@ class CharList extends Component {
         <View chars={chars} onCharSelect={this.props.onCharSelect} />
       ) : null;
 
+    // console.log(newItemsLoading);
     return (
       <div className="char__list">
         <ul className="char__grid">
@@ -54,7 +86,12 @@ class CharList extends Component {
           {errorMessage}
           {content}
         </ul>
-        <button className="button button__main button__long">
+        <button
+          className="button button__main button__long"
+          onClick={() => this.onRequest(offset)}
+          style={{ display: charEnded ? 'none' : 'block' }}
+          disabled={newItemsLoading}
+        >
           <div className="inner">load more</div>
         </button>
       </div>
@@ -65,6 +102,7 @@ class CharList extends Component {
 const View = ({ chars, onCharSelect }) => {
   // console.log(chars);
   const charsList = chars.map((char) => {
+    // console.log(char);
     return (
       // char__item_selected
       <li
@@ -74,7 +112,7 @@ const View = ({ chars, onCharSelect }) => {
       >
         <img
           src={char.thumbnail}
-          alt="abyss"
+          alt={char.name}
           className={
             char.thumbnail.indexOf('image_not_available') > -1
               ? ' not_found'
