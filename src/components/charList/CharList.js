@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 import MarvelService from '../../services/MarvelService';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import Spinner from '../spinner/Spinner';
@@ -125,6 +126,10 @@ const View = ({ chars, onCharSelect }) => {
   });
 
   return charsList;
+};
+
+CharList.propTypes = {
+  onCharSelect: PropTypes.func.isRequired,
 };
 
 export default CharList;
