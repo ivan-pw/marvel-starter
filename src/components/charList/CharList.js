@@ -16,6 +16,8 @@ class CharList extends Component {
     charEnded: false,
   };
 
+  itemsRefs = [];
+
   marvelService = new MarvelService();
 
   componentDidMount() {
@@ -35,6 +37,20 @@ class CharList extends Component {
       .getAllCharacters(offset)
       .then(this.onCharsLoaded)
       .catch(this.onError);
+  };
+
+  focusOnItem = (id) => {
+    // console.log(id);
+    this.itemsRefs.forEach((item) => {
+      item.classList.remove('char__item_selected');
+    });
+
+    this.itemsRefs[id].classList.add('char__item_selected');
+    this.itemsRefs[id].focus();
+  };
+
+  setItemsRef = (el) => {
+    this.itemsRefs.push(el);
   };
 
   onCharsLoaded = (newChars) => {
@@ -75,9 +91,41 @@ class CharList extends Component {
     const errorMessage = error ? <ErrorMessage></ErrorMessage> : null;
 
     const content =
-      !loading && !error ? (
-        <View chars={chars} onCharSelect={this.props.onCharSelect} />
-      ) : null;
+      !loading && !error
+        ? chars.map((char, i) => {
+            // console.log(char);
+            return (
+              // char__item_selected
+              <li
+                ref={this.setItemsRef}
+                className="char__item"
+                key={char.id}
+                tabIndex={0}
+                onClick={(el) => {
+                  this.props.onCharSelect(char.id);
+                  this.focusOnItem(i);
+                }}
+                onKeyPress={(e) => {
+                  if (e.key === ' ' || e.key === 'Enter') {
+                    this.props.onCharSelect(char.id);
+                    this.focusOnItem(i);
+                  }
+                }}
+              >
+                <img
+                  src={char.thumbnail}
+                  alt={char.name}
+                  className={
+                    char.thumbnail.indexOf('image_not_available') > -1
+                      ? ' not_found'
+                      : null
+                  }
+                />
+                <div className="char__name">{char.name}</div>
+              </li>
+            );
+          })
+        : null;
 
     // console.log(newItemsLoading);
     return (
@@ -99,34 +147,6 @@ class CharList extends Component {
     );
   }
 }
-
-const View = ({ chars, onCharSelect }) => {
-  // console.log(chars);
-  const charsList = chars.map((char) => {
-    // console.log(char);
-    return (
-      // char__item_selected
-      <li
-        className="char__item"
-        key={char.id}
-        onClick={() => onCharSelect(char.id)}
-      >
-        <img
-          src={char.thumbnail}
-          alt={char.name}
-          className={
-            char.thumbnail.indexOf('image_not_available') > -1
-              ? ' not_found'
-              : null
-          }
-        />
-        <div className="char__name">{char.name}</div>
-      </li>
-    );
-  });
-
-  return charsList;
-};
 
 CharList.propTypes = {
   onCharSelect: PropTypes.func.isRequired,
