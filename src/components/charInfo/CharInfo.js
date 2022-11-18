@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Spinner from '../spinner/Spinner';
 import MarvelService from '../../services/MarvelService';
@@ -7,90 +7,59 @@ import Skeleton from '../skeleton/Skeleton';
 
 import './charInfo.scss';
 
-class CharInfo extends Component {
-  state = {
-    char: null,
-    loading: false,
-    error: false,
-  };
+const CharInfo = (props) => {
+  const [char, setChar] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
-  marvelService = new MarvelService();
+  const marvelService = new MarvelService();
 
-  componentDidMount() {
-    this.updateChar();
-  }
+  useEffect(() => {
+    updateChar();
+  }, [props.charId]);
 
-  componentDidUpdate(prevProps, prevState) {
-    if (this.props.charId !== prevProps.charId) {
-      this.updateChar();
-    }
-  }
-
-  updateChar = () => {
-    const { charId } = this.props;
+  const updateChar = () => {
+    const { charId } = props;
     if (!charId) {
       return;
     }
 
-    this.marvelService
-      .getCharacter(charId)
-      .then(this.onCharLoaded)
-      .catch(this.onError);
+    marvelService.getCharacter(charId).then(onCharLoaded).catch(onError);
 
     // throw Error('Testing error boundary');
   };
 
-  componentWillUnmount() {
-    // clearInterval(this.timerId);
-  }
-
-  //   componentDidCatch(err, info) {
-  //     // for older versions
-  //     // console.log(err, info);
-  //     // this.setState({
-  //     //   error: true,
-  //     // });
-  //   }
-
-  onCharLoaded = (char) => {
+  const onCharLoaded = (char) => {
     // short desc
     char.description =
       char.description === undefined || char.description.length === 0
         ? 'Data not found'
         : char.description;
 
-    this.setState({
-      char,
-      loading: false,
-    }); // == {char: char}
+    setChar(char);
+    setLoading(false);
   };
 
-  onError = () => {
-    this.setState({
-      loading: false,
-      error: true,
-    });
+  const onError = () => {
+    setLoading(false);
+    setError(true);
   };
 
-  render() {
-    const { char, loading, error } = this.state;
+  const skeleton = char || loading || error ? null : <Skeleton></Skeleton>;
 
-    const skeleton = char || loading || error ? null : <Skeleton></Skeleton>;
+  const errorMessage = error ? <ErrorMessage></ErrorMessage> : null;
+  const spinner = loading ? <Spinner></Spinner> : null;
+  const content = !(loading || error || !char) ? <View char={char} /> : null;
 
-    const errorMessage = error ? <ErrorMessage></ErrorMessage> : null;
-    const spinner = loading ? <Spinner></Spinner> : null;
-    const content = !(loading || error || !char) ? <View char={char} /> : null;
-
-    return (
-      <div className="char__info">
-        {skeleton}
-        {errorMessage}
-        {spinner}
-        {content}
-      </div>
-    );
-  }
-}
+  return (
+    <div className="char__info">
+      {skeleton}
+      {errorMessage}
+      {spinner}
+      {content}
+    </div>
+  );
+};
 
 const View = ({ char }) => {
   const { name, description, thumbnail, homepage, wiki, comics } = char;
