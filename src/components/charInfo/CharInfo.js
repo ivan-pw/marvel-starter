@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Spinner from '../spinner/Spinner';
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import Skeleton from '../skeleton/Skeleton';
 
@@ -9,10 +9,8 @@ import './charInfo.scss';
 
 const CharInfo = (props) => {
   const [char, setChar] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
 
-  const marvelService = new MarvelService();
+  const { loading, error, getCharacter, clearError } = useMarvelService();
 
   useEffect(() => {
     updateChar();
@@ -24,7 +22,9 @@ const CharInfo = (props) => {
       return;
     }
 
-    marvelService.getCharacter(charId).then(onCharLoaded).catch(onError);
+    clearError();
+
+    getCharacter(charId).then(onCharLoaded);
 
     // throw Error('Testing error boundary');
   };
@@ -37,18 +37,13 @@ const CharInfo = (props) => {
         : char.description;
 
     setChar(char);
-    setLoading(false);
-  };
-
-  const onError = () => {
-    setLoading(false);
-    setError(true);
   };
 
   const skeleton = char || loading || error ? null : <Skeleton></Skeleton>;
 
   const errorMessage = error ? <ErrorMessage></ErrorMessage> : null;
   const spinner = loading ? <Spinner></Spinner> : null;
+
   const content = !(loading || error || !char) ? <View char={char} /> : null;
 
   return (
