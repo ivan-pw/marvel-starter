@@ -41,7 +41,7 @@ const useMarvelService = () => {
   };
 
   const _transformComics = (comics) => {
-    console.log(comics);
+    // console.log(comics);
     return {
       id: comics.id,
       title: comics.title,
