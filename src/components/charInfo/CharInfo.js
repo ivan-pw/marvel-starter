@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+
 import PropTypes from 'prop-types';
 import Spinner from '../spinner/Spinner';
 import useMarvelService from '../../services/MarvelService';
@@ -57,8 +59,9 @@ const CharInfo = (props) => {
 };
 
 const View = ({ char }) => {
-  const { name, description, thumbnail, homepage, wiki, comics } = char;
+  const { name, description, thumbnail, homepage, wiki, comics, id } = char;
 
+  // console.log(char);
   return (
     <>
       <div className="char__basics">
@@ -86,10 +89,14 @@ const View = ({ char }) => {
       <div className="char__descr">{description}</div>
       {comics.length > 0 ? <div className="char__comics">Comics:</div> : null}
       <ul className="char__comics-list">
-        {comics.slice(0, 5).map((item, i) => {
+        {comics.slice(0, 10).map((item, i) => {
+          const comicsId = item.resourceURI.slice(
+            item.resourceURI.lastIndexOf('/') + 1,
+            item.resourceURI.length
+          );
           return (
             <li className="char__comics-item" key={i}>
-              {item.name}
+              <Link to={`/comics/${comicsId}`}>{item.name}</Link>
             </li>
           );
         })}

@@ -12,7 +12,7 @@ import AppHeader from '../appHeader/AppHeader';
 
 // import MainPage from '../pages/MainPage';
 // import ComicsPage from '../pages/ComicsPage';
-import { MainPage, ComicsPage } from '../pages';
+import { MainPage, ComicsPage, Page404, SingleComicsPage } from '../pages';
 
 const App = () => {
   return (
@@ -23,6 +23,11 @@ const App = () => {
           <Routes>
             <Route path="/" element={<MainPage />}></Route>
             <Route path="/comics" element={<ComicsPage />}></Route>
+            <Route
+              path="/comics/:comicsId"
+              element={<SingleComicsPage />}
+            ></Route>
+            <Route path="*" element={<Page404 />}></Route>
           </Routes>
         </main>
       </div>
