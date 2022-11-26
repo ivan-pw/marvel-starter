@@ -36,6 +36,7 @@ const CharList = (props) => {
 
   const onCharListLoaded = (newCharList) => {
     // console.log(newChars);
+
     let ended = false;
 
     if (newCharList.lenght < 9) {
@@ -93,6 +94,12 @@ const CharList = (props) => {
 
   const spinner = loading && !newItemsLoading ? <Spinner></Spinner> : null;
   const errorMessage = error ? <ErrorMessage></ErrorMessage> : null;
+
+  // if (loading) {
+  //   import('./someFunc')
+  //     .then((obj) => obj.default())
+  //     .catch();
+  // }
 
   return (
     <div className="char__list">
