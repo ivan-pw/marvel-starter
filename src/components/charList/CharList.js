@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import useMarvelService from '../../services/MarvelService';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import Spinner from '../spinner/Spinner';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 import './charList.scss';
 
@@ -57,37 +58,42 @@ const CharList = (props) => {
     const items = arr.map((item, i) => {
       // console.log(item);
       return (
-        <li
-          ref={(el) => (itemsRefs.current[i] = el)}
-          className="char__item"
-          key={item.id}
-          tabIndex={0}
-          onClick={(el) => {
-            props.onCharSelect(item.id);
-            focusOnItem(i);
-          }}
-          onKeyPress={(e) => {
-            if (e.key === ' ' || e.key === 'Enter') {
+        <CSSTransition key={item.id} timeout={500} classNames="char__item">
+          <li
+            ref={(el) => (itemsRefs.current[i] = el)}
+            className="char__item"
+            tabIndex={0}
+            onClick={(el) => {
               props.onCharSelect(item.id);
               focusOnItem(i);
-            }
-          }}
-        >
-          <img
-            src={item.thumbnail}
-            alt={item.name}
-            className={
-              item.thumbnail.indexOf('image_not_available') > -1
-                ? ' not_found'
-                : null
-            }
-          />
-          <div className="char__name">{item.name}</div>
-        </li>
+            }}
+            onKeyPress={(e) => {
+              if (e.key === ' ' || e.key === 'Enter') {
+                props.onCharSelect(item.id);
+                focusOnItem(i);
+              }
+            }}
+          >
+            <img
+              src={item.thumbnail}
+              alt={item.name}
+              className={
+                item.thumbnail.indexOf('image_not_available') > -1
+                  ? ' not_found'
+                  : null
+              }
+            />
+            <div className="char__name">{item.name}</div>
+          </li>
+        </CSSTransition>
       );
     });
 
-    return <ul className="char__grid">{items}</ul>;
+    return (
+      <ul className="char__grid">
+        <TransitionGroup component={null}>{items}</TransitionGroup>
+      </ul>
+    );
   }
 
   const items = renderItems(charList);

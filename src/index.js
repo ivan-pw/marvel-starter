@@ -16,11 +16,7 @@ import './style/style.scss';
 //   });
 // });
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 
 // ReactDOM.render(
 //   <React.StrictMode>

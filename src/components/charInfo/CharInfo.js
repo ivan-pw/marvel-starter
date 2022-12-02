@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { Link } from 'react-router-dom';
 
 import PropTypes from 'prop-types';
@@ -58,8 +58,10 @@ const CharInfo = (props) => {
   );
 };
 
-const View = ({ char }) => {
+const View = memo(({ char }) => {
   const { name, description, thumbnail, homepage, wiki, comics, id } = char;
+
+  console.log('CharInfo View');
 
   // console.log(char);
   return (
@@ -109,7 +111,7 @@ const View = ({ char }) => {
       </ul>
     </>
   );
-};
+});
 
 CharInfo.propTypes = {
   charId: PropTypes.number,
