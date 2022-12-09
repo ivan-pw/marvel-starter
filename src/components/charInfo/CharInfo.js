@@ -2,17 +2,16 @@ import { useState, useEffect, memo } from 'react';
 import { Link } from 'react-router-dom';
 
 import PropTypes from 'prop-types';
-import Spinner from '../spinner/Spinner';
 import useMarvelService from '../../services/MarvelService';
-import ErrorMessage from '../errorMessage/ErrorMessage';
-import Skeleton from '../skeleton/Skeleton';
+import setContent from '../../utils/setContent';
 
 import './charInfo.scss';
 
 const CharInfo = (props) => {
   const [char, setChar] = useState(null);
 
-  const { loading, error, getCharacter, clearError } = useMarvelService();
+  const { loading, error, getCharacter, clearError, process, setProcess } =
+    useMarvelService();
 
   useEffect(() => {
     updateChar();
@@ -26,7 +25,11 @@ const CharInfo = (props) => {
 
     clearError();
 
-    getCharacter(charId).then(onCharLoaded);
+    getCharacter(charId)
+      .then(onCharLoaded)
+      .then(() => {
+        setProcess('confirmed');
+      });
 
     // throw Error('Testing error boundary');
   };
@@ -41,25 +44,11 @@ const CharInfo = (props) => {
     setChar(char);
   };
 
-  const skeleton = char || loading || error ? null : <Skeleton></Skeleton>;
-
-  const errorMessage = error ? <ErrorMessage></ErrorMessage> : null;
-  const spinner = loading ? <Spinner></Spinner> : null;
-
-  const content = !(loading || error || !char) ? <View char={char} /> : null;
-
-  return (
-    <div className="char__info">
-      {skeleton}
-      {errorMessage}
-      {spinner}
-      {content}
-    </div>
-  );
+  return <div className="char__info">{setContent(process, View, char)}</div>;
 };
 
-const View = memo(({ char }) => {
-  const { name, description, thumbnail, homepage, wiki, comics, id } = char;
+const View = memo(({ data }) => {
+  const { name, description, thumbnail, homepage, wiki, comics, id } = data;
 
   console.log('CharInfo View');
 
@@ -71,9 +60,7 @@ const View = memo(({ char }) => {
           src={thumbnail}
           alt={name}
           className={
-            char.thumbnail.indexOf('image_not_available') > -1
-              ? ' not_found'
-              : null
+            thumbnail.indexOf('image_not_available') > -1 ? ' not_found' : null
           }
         />
         <div>

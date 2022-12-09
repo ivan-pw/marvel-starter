@@ -2,11 +2,29 @@ import { useState, useEffect, useRef } from 'react';
 
 import PropTypes from 'prop-types';
 import useMarvelService from '../../services/MarvelService';
-import ErrorMessage from '../errorMessage/ErrorMessage';
 import Spinner from '../spinner/Spinner';
+import ErrorMessage from '../errorMessage/ErrorMessage';
+
+// import setContent from '../../utils/setContent';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 import './charList.scss';
+
+const setContent = (process, Component, newItemsLoading) => {
+  switch (process) {
+    case 'waiting':
+      return <Spinner />;
+    case 'loading':
+      return newItemsLoading ? <Component /> : <Spinner />;
+    case 'confirmed':
+      return <Component />;
+    case 'error':
+      return <ErrorMessage />;
+
+    default:
+      throw new Error('Unexpected process state');
+  }
+};
 
 const CharList = (props) => {
   const [charList, setCharList] = useState([]);
@@ -14,7 +32,7 @@ const CharList = (props) => {
   const [offset, setOffset] = useState(220);
   const [charEnded, setCharEnded] = useState(false);
 
-  const { loading, error, getAllCharacters } = useMarvelService();
+  const { getAllCharacters, process, setProcess } = useMarvelService();
 
   useEffect(() => {
     onRequest(offset, true);
@@ -22,7 +40,11 @@ const CharList = (props) => {
 
   const onRequest = (offset, initial) => {
     initial ? setNewItemsLoading(false) : setNewItemsLoading(true);
-    getAllCharacters(offset).then(onCharListLoaded);
+    getAllCharacters(offset)
+      .then(onCharListLoaded)
+      .then(() => {
+        setProcess('confirmed');
+      });
   };
 
   const focusOnItem = (id) => {
@@ -96,11 +118,6 @@ const CharList = (props) => {
     );
   }
 
-  const items = renderItems(charList);
-
-  const spinner = loading && !newItemsLoading ? <Spinner></Spinner> : null;
-  const errorMessage = error ? <ErrorMessage></ErrorMessage> : null;
-
   // if (loading) {
   //   import('./someFunc')
   //     .then((obj) => obj.default())
@@ -110,9 +127,7 @@ const CharList = (props) => {
   return (
     <div className="char__list">
       <ul className="char__grid">
-        {spinner}
-        {errorMessage}
-        {items}
+        {setContent(process, () => renderItems(charList), newItemsLoading)}
       </ul>
       <button
         className="button button__main button__long"
