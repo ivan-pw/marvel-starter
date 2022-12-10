@@ -9,7 +9,7 @@ import * as Yup from 'yup';
 import { Link } from 'react-router-dom';
 
 import useMarvelService from '../../services/MarvelService';
-import setContent from '../../utils/setContent';
+// import setContent from '../../utils/setContent';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 
 import './charSearchForm.scss';

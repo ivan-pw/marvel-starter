@@ -10,8 +10,7 @@ import './charInfo.scss';
 const CharInfo = (props) => {
   const [char, setChar] = useState(null);
 
-  const { loading, error, getCharacter, clearError, process, setProcess } =
-    useMarvelService();
+  const { getCharacter, clearError, process, setProcess } = useMarvelService();
 
   useEffect(() => {
     updateChar();
@@ -48,9 +47,9 @@ const CharInfo = (props) => {
 };
 
 const View = memo(({ data }) => {
-  const { name, description, thumbnail, homepage, wiki, comics, id } = data;
+  const { name, description, thumbnail, homepage, wiki, comics } = data;
 
-  console.log('CharInfo View');
+  // console.log('CharInfo View');
 
   // console.log(char);
   return (

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 
 import PropTypes from 'prop-types';
 import useMarvelService from '../../services/MarvelService';
@@ -49,8 +49,9 @@ const CharList = (props) => {
 
   const focusOnItem = (id) => {
     // console.log(id);
+    // console.log(itemsRefs);
     itemsRefs.current.forEach((item) => {
-      item.classList.remove('char__item_selected');
+      if (item != null) item.classList.remove('char__item_selected');
     });
 
     itemsRefs.current[id].classList.add('char__item_selected');
@@ -72,11 +73,12 @@ const CharList = (props) => {
     setCharEnded((charEnded) => ended);
   };
 
-  console.log('CharList');
+  // console.log('CharList');
 
   const itemsRefs = useRef([]);
 
   function renderItems(arr) {
+    console.log('render');
     const items = arr.map((item, i) => {
       // console.log(item);
       return (
@@ -124,11 +126,14 @@ const CharList = (props) => {
   //     .catch();
   // }
 
+  const elements = useMemo(() => {
+    return setContent(process, () => renderItems(charList), newItemsLoading);
+  }, [process]);
+
   return (
     <div className="char__list">
-      <ul className="char__grid">
-        {setContent(process, () => renderItems(charList), newItemsLoading)}
-      </ul>
+      {elements}
+      <ul className="char__grid"></ul>
       <button
         className="button button__main button__long"
         onClick={() => onRequest(offset)}

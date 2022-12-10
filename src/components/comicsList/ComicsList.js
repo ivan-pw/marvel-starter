@@ -76,7 +76,7 @@ const ComicsList = () => {
     return <ul className="comics__grid">{items}</ul>;
   }
 
-  const items = renderItems(comicsList);
+  // const items = renderItems(comicsList);
   return (
     <div className="comics__list">
       {setContent(process, () => renderItems(comicsList), newItemsLoading)}

@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, StrictMode, Suspense } from 'react';
 
 // import { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
@@ -32,6 +32,7 @@ const SinglePage = lazy(() => import('../pages/SinglePage'));
 
 const App = () => {
   return (
+    // <StrictMode>
     <Router>
       <Helmet>
         <meta
@@ -68,6 +69,7 @@ const App = () => {
         </main>
       </div>
     </Router>
+    // </StrictMode>
   );
 };
 

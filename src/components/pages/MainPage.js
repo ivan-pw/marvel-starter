@@ -4,7 +4,7 @@ import RandomChar from '../randomChar/RandomChar';
 import CharList from '../charList/CharList';
 import CharInfo from '../charInfo/CharInfo';
 import ErrorBoundary from '../errorBoundary/ErrorBoundary';
-import TestComponent from '../testComponent/TestComponent';
+// import TestComponent from '../testComponent/TestComponent';
 import CharSearchForm from '../charSearchForm/CharSearchForm';
 
 import decoration from '../../resources/img/vision.png';
@@ -17,6 +17,8 @@ const MainPage = () => {
   const onCharSelect = (id) => {
     setChar(id);
   };
+
+  // console.log('main page');
 
   return (
     <>
